@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:my_bank/main.dart';
 import 'dart:math';
 
+import 'package:my_bank/pages/login/sign_in_page.dart';
+
 
 
 class CreateAccount extends StatelessWidget {
@@ -14,29 +16,32 @@ class CreateAccount extends StatelessWidget {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-void openSnackbar(text) {
-    Get.snackbar(
-      'OK',
-      text,
-      snackPosition: SnackPosition.TOP,
-      forwardAnimationCurve: Curves.elasticInOut,
-      reverseAnimationCurve: Curves.easeOut,
-      colorText: Colors.white,
-      backgroundColor: Color.fromARGB(255, 106, 199, 44),
-      duration: const Duration(seconds: 3)
-    );
-  }
+
+
+
+
+
+  
+
+   void openSnackbar({required String status, required String text}) {
+      Get.snackbar(status, text,
+          snackPosition: SnackPosition.TOP,
+          forwardAnimationCurve: Curves.elasticInOut,
+          reverseAnimationCurve: Curves.easeOut,
+          colorText: Colors.white,
+          backgroundColor: status == "ok" ? Color(0xFF58C72C) : Color(0xffc72c41),
+          duration: const Duration(seconds: 3));
+    }
+
   String generateCardNumber() {
   Random random = Random();
   int firstDigit = random.nextInt(6) + 3; // Зазвичай 3, 4, 5 або 6 для стандартних платіжних систем
   String cardNumber = '$firstDigit';
-
   // Генерація перших 15 цифр картки
   for (int i = 0; i < 15; i++) {
     cardNumber += random.nextInt(10).toString();
   }
 
-  // Додавання останньої цифри з використанням алгоритму Луна
   
   return cardNumber;
 }
@@ -62,19 +67,20 @@ void _register(context) async {
       // Зберігання додаткової інформації в Firestore
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'name': nameController.text,
-        'surname': surnameController.text, // Припускаючи, що у вас є контролер для повного імені
-        'phone': phoneController.text,   // Припускаючи, що у вас є контролер для телефону
-        
-        // Додайте інші поля за потребою
+        'surname': surnameController.text, 
+        'phone': phoneController.text,   
+        'createDate': DateTime.now()
       });
       
      await FirebaseFirestore.instance.collection('cards').add(cardData);
-      openSnackbar("you have successfully registered");
+      openSnackbar(status: 'ok',text : "you have successfully registered");
+       final userController = Get.find<UserController>();
+       userController.userId = userCredential.user!.uid;
       Navigator.push(context, MaterialPageRoute(builder:(context) => MainPage(),));// Перехід на головний екран
       // Перехід на головний екран або інші дії після реєстрації
     }
   }on FirebaseAuthException catch (e) {
-    // Обробка помилок
+     openSnackbar(status: 'error', text: e.code);
   }
 }
 

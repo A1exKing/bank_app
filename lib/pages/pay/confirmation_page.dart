@@ -93,10 +93,13 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: Color(0xffF9F9F9),
       appBar: AppBar(
-        elevation: 1,
-        title: Text("Confirmation"),
+        backgroundColor: Color(0xffF9F9F9),
+       // elevation: 1,
+        centerTitle: true,
+        title: Text("Confirmation", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+     
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -321,7 +324,7 @@ Future<DocumentReference> findCardByNumber(String cardNumber) async {
   if (snapshot.docs.isNotEmpty) {
     return snapshot.docs.first.reference;
   } else {
-    throw Exception('Картка не знайдена');
+    throw Exception('The card was not found');
   }
 }
 Future<void> transferFundsByCardNumber(
@@ -334,7 +337,7 @@ Future<void> transferFundsByCardNumber(
 
   // Якщо один з користувачів не знайдено, припиняємо операцію
   if (fromUserId.isEmpty || toUserId.isEmpty) {
-    throw Exception('Користувача з такою карткою не знайдено');
+    throw Exception('User with such a card was not found');
   }
 
   // Отримуємо посилання на документи карток
@@ -353,7 +356,7 @@ Future<void> transferFundsByCardNumber(
 String fromUserName = fromCardSnapshot['cardHolderName'];
     // Перевірка балансу та оновлення
     if (fromCardBalance < amount) {
-      throw Exception('Недостатньо коштів на картці відправника');
+      throw Exception("The sender's card does not have sufficient funds");
     }
 
     transaction.update(fromCardRef, {'balance': fromCardBalance - amount});

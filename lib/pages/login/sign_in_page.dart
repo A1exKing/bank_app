@@ -4,6 +4,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:my_bank/main.dart';
 
+class UserController extends GetxController {
+  var _userId = ''.obs;
+
+  String get userId => _userId.value;
+
+  set userId(String value) => _userId.value = value;
+}
+
+
 class SignInPage extends StatefulWidget {
    SignInPage({super.key});
 
@@ -31,11 +40,13 @@ class _SignInPageState extends State<SignInPage> {
 
    void _signIn(context) async {
     try {
+      final userController = Get.find<UserController>();
       // Використання firebase_auth для входу користувача
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+      userController.userId = userCredential.user!.uid;
       Navigator.push(context, MaterialPageRoute(builder:(context) => MainPage(),));// Перехід на головний екран
       
     } on FirebaseAuthException catch (e) {

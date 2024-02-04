@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_bank/pages/home_page.dart/home_page.dart';
+import 'package:my_bank/models/bank_card.dart';
 import 'package:my_bank/pages/pay/pay_page.dart';
-import 'package:my_bank/pages/statistic_page/statistic_page.dart';
+import 'package:my_bank/pages/statistic/statistic_page.dart';
 
 class CardDetailsPage extends StatelessWidget {
    CardDetailsPage({super.key, required this.bankCard});
@@ -42,7 +42,7 @@ class CardDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("BALANCE", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 12),),
-                    Text("\$ ${bankCard.balanc.toStringAsFixed(2)}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
+                    Text("\$ ${bankCard.balance.toStringAsFixed(2)}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),),
                   ],
                 ),
                 Column(
@@ -124,96 +124,98 @@ class CardDetailsPage extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder:(context) => StatisticPage(),)),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-                color: Colors.white,
-                 boxShadow: [BoxShadow(color: Color(0xffe9e9e9), blurRadius: 18, offset: Offset(0, -2))]
-              ),
-              child: Column(
-                children: [
-                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color(0xffe8ebef)
-                          ),
-                          child: Icon(Icons.bar_chart, color: Color(0xffacb8bf),),
-                        ),
-                        SizedBox(width: 12,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Statistics", style: TextStyle(color: Color(0xff242424), fontSize: 16, fontWeight: FontWeight.w500),),
-                            Text("Card transactions", style: TextStyle(color: Color(0xff747474), fontSize: 14, fontWeight: FontWeight.w400),)
-                          ],
-                        ),
-                        Spacer(),
-                        Icon(Icons.chevron_right, color: Color(0xff7474747),)
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color(0xffe8ebef)
-                          ),
-                          child: Icon(Icons.payment, color: Color(0xffacb8bf),),
-                        ),
-                        SizedBox(width: 12,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Payment or transfer", style: TextStyle(color: Color(0xff242424), fontSize: 16, fontWeight: FontWeight.w500),),
-                            Text("Make a payment ot transfer", style: TextStyle(color: Color(0xff747474), fontSize: 14, fontWeight: FontWeight.w400),)
-                          ],
-                        ),
-                        Spacer(),
-                        Icon(Icons.chevron_right, color: Color(0xff7474747),)
-                      ],
-                    ),
-                  ),
-                    Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color(0xffe8ebef)
-                          ),
-                          child: Icon(Icons.settings, color: Color(0xffacb8bf),),
-                        ),
-                        SizedBox(width: 12,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Card Settings", style: TextStyle(color: Color(0xff242424), fontSize: 16, fontWeight: FontWeight.w500),),
-                            Text("Modify card", style: TextStyle(color: Color(0xff747474), fontSize: 14, fontWeight: FontWeight.w400),)
-                          ],
-                        ),
-                        Spacer(),
-                        Icon(Icons.chevron_right, color: Color(0xff7474747),)
-                      ],
-                    ),
-                  ),
-                ]
-               ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+              color: Colors.white,
+               boxShadow: [BoxShadow(color: Color(0xffe9e9e9), blurRadius: 18, offset: Offset(0, -2))]
             ),
+            child: Column(
+              children: [
+                 Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder:(context) => StatisticPage(),)),
+                    child: Container(
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Color(0xffe8ebef)
+                            ),
+                            child: Icon(Icons.bar_chart, color: Color(0xffacb8bf),),
+                          ),
+                          SizedBox(width: 12,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Statistics", style: TextStyle(color: Color(0xff242424), fontSize: 16, fontWeight: FontWeight.w500),),
+                              Text("Card transactions", style: TextStyle(color: Color(0xff747474), fontSize: 14, fontWeight: FontWeight.w400),)
+                            ],
+                          ),
+                          Spacer(),
+                          Icon(Icons.chevron_right, color: Color(0xff7474747),)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xffe8ebef)
+                        ),
+                        child: Icon(Icons.payment, color: Color(0xffacb8bf),),
+                      ),
+                      SizedBox(width: 12,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Payment or transfer", style: TextStyle(color: Color(0xff242424), fontSize: 16, fontWeight: FontWeight.w500),),
+                          Text("Make a payment ot transfer", style: TextStyle(color: Color(0xff747474), fontSize: 14, fontWeight: FontWeight.w400),)
+                        ],
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right, color: Color(0xff7474747),)
+                    ],
+                  ),
+                ),
+                  Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xffe8ebef)
+                        ),
+                        child: Icon(Icons.settings, color: Color(0xffacb8bf),),
+                      ),
+                      SizedBox(width: 12,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Card Settings", style: TextStyle(color: Color(0xff242424), fontSize: 16, fontWeight: FontWeight.w500),),
+                          Text("Modify card", style: TextStyle(color: Color(0xff747474), fontSize: 14, fontWeight: FontWeight.w400),)
+                        ],
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right, color: Color(0xff7474747),)
+                    ],
+                  ),
+                ),
+              ]
+             ),
           ),
 
         ],

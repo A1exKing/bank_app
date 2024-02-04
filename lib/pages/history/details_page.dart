@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:my_bank/pages/home_page.dart/last_transaction.dart';
+import 'package:my_bank/models/transactions.dart';
+import 'package:my_bank/pages/home.dart/last_transaction.dart';
 
 class DetailsTransaction extends StatelessWidget {
   Transactions transaction;
-  String userName;
+
   String typeTran;
-   DetailsTransaction(this.transaction, this.userName, this.typeTran, {super.key});
+   DetailsTransaction(this.transaction, this.typeTran, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,9 @@ class DetailsTransaction extends StatelessWidget {
        backgroundColor: Color(0xffF9F9F9),
       appBar: AppBar(
          backgroundColor: Color(0xffF9F9F9),
-        title:  const Text("Details Transaction"),
+          centerTitle: true,
+        title: Text("Details Transaction", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+      
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -42,7 +45,7 @@ class DetailsTransaction extends StatelessWidget {
                   Text("${formattedDate}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
                   SizedBox(height: 12,),
                   Text("$typeTran's:"),
-                  Text("${userName}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                  Text(typeTran == "Sender" ? '${transaction.fromUserName}' : '${transaction.toUserName}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
                   
                   SizedBox(height: 12,),
                   Text("Description:"),
