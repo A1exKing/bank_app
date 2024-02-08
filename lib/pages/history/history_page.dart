@@ -1,16 +1,19 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:my_bank/api/get_transactions.dart';
+import 'package:my_bank/controllers/user_controller.dart';
 import 'package:my_bank/models/transactions.dart';
 import 'package:my_bank/pages/history/details_page.dart';
 import 'package:my_bank/pages/home.dart/last_transaction.dart';
 
+
 class HistoryPage extends StatelessWidget {
   HistoryPage({Key? key}) : super(key: key);
 
-  final String userId = getCurrentUserUid();
-
+ 
+  String userId = Get.find<UserController>().userId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,26 +30,22 @@ class HistoryPage extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: TransactionListWidget(userId: userId),
+        child: TransactionListWidget(),
       ),
     );
   }
 
-  static String getCurrentUserUid() {
-    User? user = FirebaseAuth.instance.currentUser;
-    return user != null ? user.uid : '';
-  }
+ 
 }
 
-class TransactionListWidget extends StatelessWidget {
-  final String userId;
+class TransactionListWidget extends StatelessWidget {// Виводить список транзакці
 
-  TransactionListWidget({Key? key, required this.userId}) : super(key: key);
-
+  TransactionListWidget({Key? key}) : super(key: key);
+  String userId = Get.find<UserController>().userId;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Transactions>>(
-      stream: getTransactionsStream(userId),
+      stream: getTransactionsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -84,7 +83,20 @@ class TransactionListWidget extends StatelessWidget {
                   ),
                 ),
                 Column(
-                  children: dailyTransactions.map((transaction) => TransactionItem(transaction: transaction, userId: userId)).toList(),
+                  children: dailyTransactions.map((transaction) { 
+                     String formattedDate = DateFormat('HH:mm').format(transaction.date);
+ return transaction.type == "mobile"
+              ? MobileTransactionItem(
+                  transaction: transaction,
+                  userId: userId,
+                  formattedDate: formattedDate)
+              : TransactionItem(
+                  transaction: transaction,
+                  userId: userId, formattedDate: formattedDate,
+                  );
+                   // return TransactionItem(transaction: transaction, userId: userId);
+                    
+                    }).toList(),
                 ),
               ],
             );
@@ -95,70 +107,3 @@ class TransactionListWidget extends StatelessWidget {
   }
 }
 
-
-
-
-
-class TransactionItem extends StatelessWidget {
-  final Transactions transaction;
-  final String userId;
-
-  const TransactionItem({Key? key, required this.transaction, required this.userId}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    String userName = getUserName(transaction, userId);
-    String formattedDate = DateFormat('HH:mm').format(transaction.date);
-
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailsTransaction(transaction,  transaction.isIncoming(userId)
-                          ? "Sender"
-                          : "Recipient"),
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: transaction.isIncoming(userId) ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
-              child: Icon(
-                transaction.isIncoming(userId) ? Icons.arrow_downward : Icons.arrow_upward,
-                color: transaction.isIncoming(userId) ? Colors.green : Colors.redAccent,
-              ),
-            ),
-            SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  transaction.isIncoming(userId) ? "From: ${transaction.fromCardId}" : "To: ${transaction.toCardId}",
-                  style: TextStyle(color: Color(0xff242424), fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  formattedDate,
-                  style: TextStyle(color: Color(0xff747474), fontSize: 12, fontWeight: FontWeight.w400),
-                )
-              ],
-            ),
-            Spacer(),
-            Text(
-              transaction.isIncoming(userId) ? "+\$${transaction.amount.toStringAsFixed(2)}" : "-\$${transaction.amount.toStringAsFixed(2)}",
-              style: TextStyle(color: Color(0xff242424), fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String getUserName(Transactions transaction, String userId) {
-    return transaction.isIncoming(userId) ? transaction.fromUserName : transaction.toUserName;
-  }
-}

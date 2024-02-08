@@ -2,15 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:my_bank/controllers/user_controller.dart';
 import 'package:my_bank/main.dart';
+import 'package:my_bank/widgets/snackbar.dart';
 
-class UserController extends GetxController {
-  var _userId = ''.obs;
-
-  String get userId => _userId.value;
-
-  set userId(String value) => _userId.value = value;
-}
 
 
 class SignInPage extends StatefulWidget {
@@ -25,19 +20,7 @@ class _SignInPageState extends State<SignInPage> {
 
    final TextEditingController passwordController = TextEditingController();
 
-   void openSnackbar(textError) {
-    Get.snackbar(
-      'Error',
-      textError,
-      snackPosition: SnackPosition.TOP,
-      forwardAnimationCurve: Curves.elasticInOut,
-      reverseAnimationCurve: Curves.easeOut,
-      colorText: Colors.white,
-      backgroundColor: Color(0xffc72c41),
-      duration: const Duration(seconds: 3)
-    );
-  }
-
+ 
    void _signIn(context) async {
     try {
       final userController = Get.find<UserController>();
@@ -52,21 +35,17 @@ class _SignInPageState extends State<SignInPage> {
     } on FirebaseAuthException catch (e) {
       print(e.code);
       if (e.code == 'user-not-found') { // Немає користувача, що відповідає вказаній електронній адресі.
-        openSnackbar("There is no user matching the specified email address.");
+        openSnackbar(status : "error", text : "There is no user matching the specified email address.");
     } else if (e.code == 'invalid-credential') { // Неправильний пароль для даної електронної адреси.
-      
-        openSnackbar("The password for this email address is incorrect.");
-      
+         openSnackbar(status : "error", text :"The password for this email address is incorrect.");
      } else if (e.code == 'too-many-requests') { //   Багато спроб входу з невірним паролем.
-        openSnackbar("Many login attempts with incorrect password.");
+         openSnackbar(status : "error", text :"Many login attempts with incorrect password.");
      } else if (e.code == 'channel-error') { // Незаповнені поля.
-      
-        openSnackbar("There are blank fields.");
-      
+         openSnackbar(status : "error", text :"There are blank fields.");
      } else if (e.code == 'invalid-email') { //   Багато спроб входу з невірним паролем.
-        openSnackbar("Invalid Email.");
+         openSnackbar(status : "error", text :"Invalid Email.");
      } else{
-      openSnackbar("Login Error");
+       openSnackbar(status : "error", text :"Login Error");
      }
     }
   }
@@ -76,6 +55,7 @@ class _SignInPageState extends State<SignInPage> {
      // Визначення, чи відкрита клавіатура
     bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
      // resizeToAvoidBottomInset: false,
       appBar: AppBar(

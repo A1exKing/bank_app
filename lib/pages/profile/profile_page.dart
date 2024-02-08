@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:my_bank/controllers/user_controller.dart';
 import 'package:my_bank/pages/login/login_page..dart';
-import 'package:my_bank/pages/login/sign_in_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 

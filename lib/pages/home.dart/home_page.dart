@@ -2,38 +2,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:my_bank/api/get_user_data.dart';
+import 'package:my_bank/controllers/user_controller.dart';
 import 'package:my_bank/models/bank_card.dart';
 import 'package:my_bank/pages/home.dart/last_transaction.dart';
 import 'package:my_bank/pages/home.dart/widgets/card_item.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  Future<Map<String, dynamic>?> getUserData() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) return null;
-
-    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
-    final QuerySnapshot cardsSnapshot = await FirebaseFirestore.instance
-        .collection('cards')
-        .where('userID', isEqualTo: user.uid)
-        .get();
-
-    final List<Map<String, dynamic>> cards = cardsSnapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
-
-    return {'userData': userDoc.data(), 'cards': cards};
-  }
-
   @override
   Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-    return WillPopScope(
+    final userController = Get.find<UserController>();//отрмуємо доступ до userController
+    final userId = userController.userId; // отримали ід користувача
+    return WillPopScope(// заороеняє повертатися назад. в даному випадку на екран входу або створення користувача
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: const Color(0xffF9F9F9),

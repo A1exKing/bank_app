@@ -11,12 +11,13 @@ class PayPage extends StatelessWidget {
   final TextEditingController sumTransferController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final BankCard cardData;
-  PayPage({super.key, required this.cardData});
+  final String? toCardNum;
+  PayPage({super.key, required this.cardData, this.toCardNum});
   
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-
+  toCardNum != null ? numCardController.text = toCardNum! : numCardController;
     return Scaffold(
       backgroundColor: Color(0xffF9F9F9),
       resizeToAvoidBottomInset: false,
@@ -114,26 +115,28 @@ class PayPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: Color(0xFFE4E4E4)),
                       ),
-                      child: TextFormField(
-                        
+                      child: TextFormField( 
                         keyboardType: TextInputType.number,
                         controller: numCardController,
                         decoration: InputDecoration(
                             prefixIcon: Icon(Icons.payment_outlined),
                             hintText: "Number card"),
                             validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter the card number';
-        }
-        if (value.length != 16) {
-          return 'The card number should contain exactly 16 digits';
-        }
-        if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-          return 'The card number should consist only of digits';
-        }
-        return null; // Повертаємо null, якщо дані валідні
-      },
-      
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter the card number';
+                            }
+                             if (value == cardData.cardNumber) {
+                              return "you need to enter another card number";
+                            }
+                            if (value.length != 16) {
+                              return 'The card number should contain exactly 16 digits';
+                            }
+                            if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                              return 'The card number should consist only of digits';
+                            }
+                            return null; // Повертаємо null, якщо дані валідні
+                          },
+                          
                       ),
                       
                     ),
@@ -151,14 +154,14 @@ class PayPage extends StatelessWidget {
                   hintText: "Amount to transfer",
                    hintStyle: TextStyle(fontWeight: FontWeight.w400)),
                    validator: (value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter the amount for the transfer';
-    }
-    if (!RegExp(r'^[0-9]+(\.[0-9]+)?$').hasMatch(value)) {
-      return 'Enter a valid number (integer or floating point . )';
-    }
-    return null; // Якщо дані валідні
-  },
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the amount for the transfer';
+                  }
+                  if (!RegExp(r'^[0-9]+(\.[0-9]+)?$').hasMatch(value)) {
+                    return 'Enter a valid number (integer or floating point . )';
+                  }
+                  return null; // Якщо дані валідні
+                },
               ),
             ),
         

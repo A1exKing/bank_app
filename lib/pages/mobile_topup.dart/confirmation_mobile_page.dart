@@ -1,27 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:my_bank/controllers/user_controller.dart';
+import 'package:my_bank/pages/pay/confirmation_page.dart';
 import 'package:my_bank/pages/pay/status_pay_page.dart';
 import 'package:my_bank/widgets/snackbar.dart';
 
-
-
-
-
-class ConfirmationPage extends StatefulWidget {
-   ConfirmationPage({super.key, required  this.sum, required  this.description, required  this.numberOnCard, required  this.numberFromCard});
+class ConfirmationMobilePage extends StatefulWidget {
+ ConfirmationMobilePage({super.key, required  this.sum,  required  this.mobileNumber, required  this.numberFromCard});
    final String sum;
-   final String description;
-   final String numberOnCard;
+   final String mobileNumber;
    final String numberFromCard;
+
   @override
-  State<ConfirmationPage> createState() => _ConfirmationPageState();
+  State<ConfirmationMobilePage> createState() => _ConfirmationMobilePageState();
 }
 
-class _ConfirmationPageState extends State<ConfirmationPage> {
-  bool _isLoading = false;
+class _ConfirmationMobilePageState extends State<ConfirmationMobilePage> {
+   bool _isLoading = false;
 
 
   @override
@@ -74,11 +71,11 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Card",
+                    "Mobile number",
                     style: TextStyle(color: Color(0xff242424), fontSize: 16),
                   ),
                    Text(
-                    widget.numberOnCard,
+                    widget.mobileNumber,
                     style: TextStyle(color: Color(0xff747474), fontSize: 14),
                   ),
                 ],
@@ -103,25 +100,12 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                         style: TextStyle(color: Color(0xff747474), fontSize: 14),
                       ),
                       Text(
-                        "\$ 2.00",
+                        "\$ 1.00",
                         style: TextStyle(color: Color(0xff242424), fontSize: 14),
                       ),
                     ],
                   ),
-                  SizedBox(height: 12,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Сommission from the recipient",
-                        style: TextStyle(color: Color(0xff747474), fontSize: 14),
-                      ),
-                      Text(
-                        "\$ 0.00",
-                        style: TextStyle(color: Color(0xff242424), fontSize: 14),
-                      ),
-                    ],
-                  ),
+                
                   SizedBox(height: 12,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -150,7 +134,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                         style: TextStyle(color: Color(0xff747474), fontSize: 14, fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        "\$ ${double.parse(widget.sum) + 2} ",
+                        "\$ ${double.parse(widget.sum) + 1} ",
                         style: TextStyle(color: Color(0xff242424), fontSize: 14, fontWeight: FontWeight.w500),
                       ),
                     ],
@@ -167,26 +151,25 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: (){
-                   // findUserIdByCardNumber("6688193235576057");
                     setState(() => _isLoading = true);
 
-    transferFundsByCardNumber(widget.numberFromCard, widget.numberOnCard, double.parse(widget.sum)+2, widget.description)
-    .then((_) {
-      // Обробка успішного завершення
-     // openSnackbar(status: "ok", text: "Транзакція успішно завершена");
-     Navigator.push(context, MaterialPageRoute(builder:(context) =>  StatusPayPage(),));
-    })
-    .catchError((error) {
-      // Обробка помилки
-      openSnackbar(status: "error", text: 'Transaction error: $error');
-    })
-    .whenComplete(() {
-      // Виконується після успішного завершення або помилки
-      setState(() => _isLoading = false);
-    });
-                  
+                transferToMobile(widget.numberFromCard, widget.mobileNumber, double.parse(widget.sum)+1)
+                .then((_) {
+                  // Обробка успішного завершення
+                // openSnackbar(status: "ok", text: "Транзакція успішно завершена");
+                Navigator.push(context, MaterialPageRoute(builder:(context) =>  StatusPayPage(),));
+                })
+                .catchError((error) {
+                  // Обробка помилки
+                  openSnackbar(status: "error", text: 'Transaction error: $error');
+                })
+                .whenComplete(() {
+                  // Виконується після успішного завершення або помилки
+                  setState(() => _isLoading = false);
+                });
+                              
                        
-                   // Navigator.push(context, MaterialPageRoute(builder:(context) =>  CreateAccount(),));
+                 
                   }, 
                   style:  ButtonStyle(//задаємо стилі для кнопочки
                     backgroundColor: const MaterialStatePropertyAll(Color(0xff7f00ff)),
@@ -199,91 +182,29 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                     ),
                   
                   ),
-                  child: Text("Pay \$${double.parse(widget.sum) + 2} ",style: TextStyle(color: Colors.white)),),
+                  child: Text("Pay \$${double.parse(widget.sum) + 1} ",style: TextStyle(color: Colors.white)),),
               )
           ],
         ),
       ),
     );
   }
- 
- 
-
 }
-
-
-Future<String> findUserIdByCardNumber(String cardNumber) async {
- // FirebaseAuth auth = FirebaseAuth.instance;
+Future<void> transferToMobile(String fromCardNumber, String mobileNumber, double amount) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  try {
-  
-    QuerySnapshot cardSnapshot = await firestore
-        .collection('cards')
-        .where('cardNumber', isEqualTo: cardNumber)
-        .limit(1)
-        .get();
-
-    if (cardSnapshot.docs.isNotEmpty) {
-      var cardData = cardSnapshot.docs.first.data() as Map<String, dynamic>; 
-      String userId = cardData['userID'];
-      print(userId);
-      return userId;
-    } else {
-      print("userID");
-      return '';
-      
-    }
-  } catch (e) {
-    print(e);
-    return '';
-  }
-}
-Future<DocumentReference> findCardByNumber(String cardNumber) async {
-  QuerySnapshot snapshot = await FirebaseFirestore.instance
-      .collection('cards')
-      .where('cardNumber', isEqualTo: cardNumber)
-      .limit(1)
-      .get();
-
-  if (snapshot.docs.isNotEmpty) {
-    return snapshot.docs.first.reference;
-  } else {
-    throw Exception('The card was not found');
-  }
-}
-Future<void> transferFundsByCardNumber(
-    String fromCardNumber, String toCardNumber, double amount, String description) async {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  // Знаходимо userId для обох карток
-  String fromUserId = await findUserIdByCardNumber(fromCardNumber);
-  String toUserId = await findUserIdByCardNumber(toCardNumber);
-
-  // Якщо один з користувачів не знайдено, припиняємо операцію
-  if (fromUserId.isEmpty || toUserId.isEmpty) {
-    throw Exception('User with such a card was not found');
-  }
-
+ String userId = Get.find<UserController>().userId;
+ 
   final DocumentReference fromCardRef = await findCardByNumber(fromCardNumber);
-  final DocumentReference toCardRef = await findCardByNumber(toCardNumber);
 
   return firestore.runTransaction((transaction) async {
     // Отримання інформації про картки
     DocumentSnapshot fromCardSnapshot = await transaction.get(fromCardRef);
-    DocumentSnapshot toCardSnapshot = await transaction.get(toCardRef);
 
     // Перевірка, чи не заблоковані картки
     if (fromCardSnapshot['isBlocked'] == true) {
       throw Exception("The sender's card is blocked and cannot be used for transactions.");
     }
-
-    if (toCardSnapshot['isBlocked'] == true) {
-      throw Exception("The recipient's card is blocked and cannot receive funds.");
-    }
-
     double fromCardBalance = fromCardSnapshot['balance'];
-    double toCardBalance = toCardSnapshot['balance'];
-    String toUserName = toCardSnapshot['cardHolderName'];
     String fromUserName = fromCardSnapshot['cardHolderName'];
 
     // Перевірка балансу та оновлення
@@ -292,18 +213,16 @@ Future<void> transferFundsByCardNumber(
     }
 
     transaction.update(fromCardRef, {'balance': fromCardBalance - amount});
-    transaction.update(toCardRef, {'balance': toCardBalance + amount});
+   
 
     // Додавання запису транзакції
     await firestore.collection('transactions').add({
-      'fromUserId': fromUserId,
-      'toUserId': toUserId,
-      'toUserName': toUserName,
+      'fromUserId': userId,
+      'type': "mobile",
       'fromUserName': fromUserName,
       'fromCardId': fromCardNumber,
-      'toCardId': toCardNumber,
+      'toMobileNumber': mobileNumber,
       'amount': amount,
-      'description': description,
       'date': DateTime.now(),
     });
   });

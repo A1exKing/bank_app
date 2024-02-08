@@ -4,6 +4,7 @@ import 'dart:convert';
     String cardNumber;
     String cardHolderName;
     String expiryDate;
+    bool isBlocked;
     int cvv;
     num balance;
 
@@ -12,6 +13,7 @@ import 'dart:convert';
         required this.cardHolderName,
         required this.expiryDate,
         required this.cvv,
+        required this.isBlocked,
         required this.balance});
 
 
@@ -20,6 +22,7 @@ import 'dart:convert';
         cardNumber: map['cardNumber'] as String,
         cardHolderName: map['cardHolderName'] as String,
         expiryDate: map['expiryDate'] as String,
+        isBlocked: map['isBlocked'] as bool,
         cvv: map['cvv'] as int,
         balance: map['balance'] as num,
       );

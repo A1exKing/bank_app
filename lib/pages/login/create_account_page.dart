@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_bank/controllers/user_controller.dart';
 import 'package:my_bank/main.dart';
 import 'dart:math';
 
-import 'package:my_bank/pages/login/sign_in_page.dart';
+import 'package:my_bank/widgets/snackbar.dart';
 
 
 
@@ -19,20 +20,6 @@ class CreateAccount extends StatelessWidget {
 
 
 
-
-
-  
-
-   void openSnackbar({required String status, required String text}) {
-      Get.snackbar(status, text,
-          snackPosition: SnackPosition.TOP,
-          forwardAnimationCurve: Curves.elasticInOut,
-          reverseAnimationCurve: Curves.easeOut,
-          colorText: Colors.white,
-          backgroundColor: status == "ok" ? Color(0xFF58C72C) : Color(0xffc72c41),
-          duration: const Duration(seconds: 3));
-    }
-
   String generateCardNumber() {
   Random random = Random();
   int firstDigit = random.nextInt(6) + 3; // Зазвичай 3, 4, 5 або 6 для стандартних платіжних систем
@@ -41,8 +28,6 @@ class CreateAccount extends StatelessWidget {
   for (int i = 0; i < 15; i++) {
     cardNumber += random.nextInt(10).toString();
   }
-
-  
   return cardNumber;
 }
 
@@ -62,6 +47,7 @@ void _register(context) async {
       'expiryDate': "${DateTime.now().month}/${DateTime.now().year +2}",
       'userID' : user.uid,
       'balance' : 1000.0,
+      'isBlocked' : false,
       'cvv': Random().nextInt(900) + 100 // 900 = 999 - 100 + 1
     };  
       // Зберігання додаткової інформації в Firestore

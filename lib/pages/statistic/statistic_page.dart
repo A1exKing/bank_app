@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_bank/pages/history/history_page.dart';
-import 'package:my_bank/pages/login/sign_in_page.dart';
+import 'package:my_bank/controllers/user_controller.dart';
+
 
 class StatisticPage extends StatelessWidget {
   const StatisticPage({super.key});

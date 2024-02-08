@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_bank/pages/login/sign_in_page.dart';
+import 'package:my_bank/controllers/user_controller.dart';
 
 class CardsPage extends StatelessWidget {
   const CardsPage({super.key});
@@ -60,13 +60,7 @@ class CardsPage extends StatelessWidget {
                 ],
               ),
             );
-            
-            // ListTile(
-            //   title: Text(cardData['cardHolderName'] ?? 'Невідомий'),
-            //   subtitle: Text('Номер карти: ${cardData['cardNumber']}'),
-            //   trailing: Text('Баланс: ${cardData['balance']}'),
-            //   // Тут можна додати більше інформації або віджетів за необхідності
-            // );
+
           },
         );
       },

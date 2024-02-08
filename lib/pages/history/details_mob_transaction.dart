@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:my_bank/models/transactions.dart';
 
 
-class DetailsTransaction extends StatelessWidget {
+class DetailsMobTransaction extends StatelessWidget {
   Transactions transaction;
 
-  String typeTran;
-   DetailsTransaction(this.transaction, this.typeTran, {super.key});
+  
+   DetailsMobTransaction(this.transaction, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,18 +38,12 @@ class DetailsTransaction extends StatelessWidget {
                   Text("From Card:"),
                   Text("${transaction.fromCardId}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
                   SizedBox(height: 12,),
-                  Text("To Card:"),
-                  Text("${transaction.toCardId}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                  Text("To mobile number:"),
+                  Text("${transaction.mobileNumber}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
                   SizedBox(height: 12,),
                   Text("Date:"),
                   Text("${formattedDate}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-                  SizedBox(height: 12,),
-                  Text("$typeTran's:"),
-                  Text(typeTran == "Sender" ? '${transaction.fromUserName}' : '${transaction.toUserName}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-                  
-                  SizedBox(height: 12,),
-                  Text("Description:"),
-                  Text("${transaction.description}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                 
  SizedBox(height: 12,),
                   
                   Divider(color: Color.fromARGB(255, 94, 77, 77),),
